@@ -3,6 +3,7 @@ use DI\Container as Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
+use Util\Connection;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -18,6 +19,10 @@ $app->setBasePath("/registrazione_esami");
 
 $container->set('template', function (){
     return new League\Plates\Engine('../templates', 'phtml');
+});
+
+$container->set('connection', function (){
+    return Connection::getInstance();
 });
 
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
