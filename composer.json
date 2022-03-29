@@ -1,14 +1,15 @@
 {
     "autoload": {
         "psr-4": {
-            "Util\\" : "Util/"
+            "Util\\" : "Util/",
+            "Model\\": "Model/"
         }
     },
     "require": {
         "slim/slim": "4.*",
         "slim/psr7": "^1.5",
-        "ext-json": "*",
         "league/plates": "^3.4",
-        "php-di/slim-bridge": "*"
+        "php-di/slim-bridge": "*",
+        "tuupola/slim-jwt-auth": "^3.6"
     }
 }
