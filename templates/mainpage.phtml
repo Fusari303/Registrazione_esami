@@ -1,0 +1,33 @@
+<?php
+/** @var $basepath */
+?>
+<?php $this->layout('home', [
+    'title' => 'Cerca studente'
+])
+?>
+<h1>Ricerca studente</h1>
+<button <?php setcookie("type","",time()-3600);
+header("location:index.php")?>
+>Logout</button>
+<form class="form-horizontal" action="<?=$basepath?>/voto/form" method="post">
+    <div class="input-group">
+        <span class="input-group-addon col-4">Matricola</span>
+        <input type="text" class="form-input" placeholder="Matricola dello studente" name="matricola">
+        <input type="submit" class="btn btn-primary" value="Cerca">
+    </div>
+</form>
+<div>
+    <div class="overflow-x-auto">
+        <table class="table w-full">
+            <tr>
+                <th>ID</th>
+                <th>data</th>
+            </tr>
+            <?php  foreach ($esami as $esame): ?>
+                <tr>
+                    <td><?=$esame['id']?></td>
+                    <td><?=$esame['data']?></td>
+                </tr>
+            <?php endforeach; ?></table>
+    </div>
+</div>
