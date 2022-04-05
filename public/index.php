@@ -14,6 +14,7 @@ use Util\Connection;
 require __DIR__ . '/../vendor/autoload.php';
 require_once '../conf/config.php';
 
+
 $container = new Container();
 //da inserire prima della create di AppFactory
 AppFactory::setContainer($container);
@@ -74,11 +75,27 @@ $app->get('/', function (Request $request, Response $response) {
 $app->get('/login', function (Request $request, Response $response) {
     //Se il login è già stato effettuato ridirigo verso la ricerca dello studente
     if (isset($_COOKIE['token']))
-        return $response->withStatus(302)->withHeader('Location', BASE_PATH . '/studente/cerca');
+        return $response->withStatus(302)->withHeader('Location', BASE_PATH . '/mainpage');
     $template = $this->get('template');
     $response->getBody()->write($template->render('login'));
     return $response;
 });
+
+
+
+/**$app->get('/logout', function (Request $request, Response $response) {
+    //Se il login è già stato effettuato ridirigo verso la ricerca dello studente
+    $secretKey  = JWT_SECRET;
+    $tokenId    = base64_encode(random_bytes(16));
+    $issuedAt   = new DateTimeImmutable();
+    $expire     = $issuedAt->modify('-700000000')->getTimestamp();      // Add 60 seconds
+    $serverName = 'imparando.net';
+    if (isset($_COOKIE[session_name()]))
+        return $response->withStatus(302)->withHeader('Location', BASE_PATH . '/login');
+    $template = $this->get('template');
+    $response->getBody()->write($template->render('login'));
+    return $response;
+});*/
 
 /*
  * Rotta che genera il token JWT dopo aver proceduto all'autenticazione
@@ -86,14 +103,14 @@ $app->get('/login', function (Request $request, Response $response) {
 $app->post('/autenticazione', function (Request $request, Response $response) {
     //Se il login è già stato effettuato ridirigo verso la ricerca dello studente
     if (isset($_COOKIE['token']))
-        return $response->withStatus(302)->withHeader('Location', BASE_PATH . '/studente/cerca');
+        return $response->withStatus(302)->withHeader('Location', BASE_PATH . '/mainpage');
     $data = $request->getParsedBody();
     $username = $data['username'];
     $password = $data['password'];
     $jwt = \Model\ProfessoreRepository::verificaAutenticazione($username,$password);
     if ($jwt !== null) {
         setcookie('token', $jwt);
-        return $response->withStatus(302)->withHeader('Location', BASE_PATH . '/studente/cerca');
+        return $response->withStatus(302)->withHeader('Location', BASE_PATH . '/mainpage');
     }
     else{
         $template = $this->get('template');
@@ -109,9 +126,12 @@ $app->post('/autenticazione', function (Request $request, Response $response) {
  * Rotta per la creazione della form di ricerca di uno studente
  * tramite la matricola
  */
-$app->get('/studente/cerca', function (Request $request, Response $response) {
+$app->get('/mainpage', function (Request $request, Response $response) {
     $template = $this->get('template');
-    $response->getBody()->write($template->render('cercaStudente'));
+    $esami =\Model\EsameRepository::getEsami();
+    $response->getBody()->write($template->render('mainpage',[
+        'esami' => $esami
+    ]));
     return $response;
 }
 );
